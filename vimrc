@@ -1,8 +1,23 @@
 syntax on
 
+filetype plugin indent on
+
 set encoding=utf-8
 
+"set termguicolors
+
 set mouse=a
+
+" set displaying message at the bottom 2 spacehight
+set cmdheight=2
+
+" set shorter updatetime (default at 4000ms)
+set updatetime=500
+
+" Don't pass message in |ins-completion-menu|.
+set shortmess+=c
+
+set signcolumn=yes
 
 " no error sound when endof file
 set noerrorbells
@@ -48,14 +63,23 @@ set splitright
 call plug#begin('~/.vim/plugged')
 
 Plug 'morhetz/gruvbox'
+" Plug 'ycm-core/YouCompleteMe'
 Plug 'digitaltoad/vim-pug'
 Plug 'jremmen/vim-ripgrep'
-Plug 'leafgarland/typescript-vim'
-Plug 'ycm-core/YouCompleteMe'
+" tsx, jsx plugin vim-jsx-pretty work well with ts syntax hightlight
+"Plug 'peitalin/vim-jsx-typescript'
+Plug 'maxmellon/vim-jsx-pretty'
+Plug 'HerringtonDarkholme/yats.vim'
+" typescript-vim not working with tsx, jsx syntax hightlight plugins
+"Plug 'leafgarland/typescript-vim'
 Plug 'kien/ctrlp.vim'
 Plug 'mbbill/undotree'
 Plug 'scrooloose/nerdtree'
 Plug 'ryanoasis/vim-devicons'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+" Plugin for markdown
+" Plug 'JamshedVesuna/vim-markdown-preview'
 
 call plug#end()
 
@@ -64,6 +88,12 @@ set background=dark
 
 " map leader key to space
 let mapleader = " "
+
+" set filetypes as typescriptreact
+"autocmd BufNewFile,BufRead *.tsx,*.jsx set filetype=typescriptreact
+
+let g:vim_jsx_pretty_colorful_config = 1
+let g:vim_jsx_pretty_highlight_close_tag = 1
 
 " File Explorer setting
 "let g:netrw_browse_split=2
@@ -109,19 +139,59 @@ nnoremap <silent> <leader>_ :resize -5<CR>
 nnoremap <silent> <leader>+ :resize +5<CR>
 
 " YCM
-nnoremap <silent> <leader>gd :YcmCompleter GoTo<CR>
-nnoremap <silent> <leader>gf :YcmCompleter FixIt<CR>
-nnoremap <silent> <leader>rn :YcmCompleter RefactorRename<space>
+"fun! GoYCM()
+"  nnoremap <buffer> <silent> <leader>gd :YcmCompleter GoTo<CR>
+"  nnoremap <buffer> <silent> <leader>gf :YcmCompleter FixIt<CR>
+"  nnoremap <buffer> <silent> <leader>rn :YcmCompleter RefactorRename<space>
+"endfun
 " close preview when leave insert mode
-let g:ycm_autoclose_preview_window_after_insertion=1
+"let g:ycm_autoclose_preview_window_after_insertion=1
 
-let g:ycm_goto_buffer_command='same-buffer'
+"let g:ycm_goto_buffer_command='same-buffer'
+
+" COC
+" from github page.
+inoremap <silent><expr> <TAB>
+            \ pumvisible() ? "\<C-n>" :
+            \ <SID>check_back_space() ? "\<TAB>" :
+            \ coc#refresh()
+" shift tab
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+" ctrl space
+inoremap <silent><expr> <C-space> coc#refresh()
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1] =~# '\s'
+endfunction
+
+" code navigation.
+nmap <silent> <leader>gd <Plug>(coc-definition)
+nmap <silent> <leader>gy <Plug>(coc-type-definition)
+nmap <silent> <leader>gi <Plug>(coc-implementation)
+nmap <silent> <leader>gr <Plug>(coc-references)
+
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim', 'help'], &filetype) >= 0)
+    execute 'h '.expend('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
+
+" Highlight the symbol and refaerences when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
 
 " map esc
 imap jk <ESC>
 imap kj <ESC>
-vmap jk <ESC>
-vmap kj <ESC>
 
 " ingegrated terminal maping
 
@@ -138,11 +208,10 @@ function! OpenTerminal()
   split term://bash
   resize 10
 endfunction
+" open terminal with ctrl+n
 nnoremap <C-n> :call OpenTerminal()<CR>
 
-" jump between tabs in terminals
-tnoremap <leader>h <C-\><C-n><C-w>h
-tnoremap <leader>j <C-\><C-n><C-w>j
-tnoremap <leader>k <C-\><C-n><C-w>k
-tnoremap <leader>l <C-\><C-n><C-w>l
+" markdown preview setting
+let vim_markdown_preview_toggle = 1
+let vim_markdown_preview_hotkey = '<leader>md'
 
