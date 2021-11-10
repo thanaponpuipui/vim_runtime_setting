@@ -27,6 +27,8 @@ set tabstop=2 softtabstop=2
 set shiftwidth=2
 set expandtab
 set smartindent
+set conceallevel=1
+set list lcs=tab:\|\ 
 
 " hybrid line number with automatic toggling mode
 set nu rnu 
@@ -78,6 +80,11 @@ Plug 'scrooloose/nerdtree'
 Plug 'ryanoasis/vim-devicons'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
+Plug 'fatih/vim-go'
+
+" indent line
+Plug 'yggdroot/indentline'
+
 " Plugin for markdown
 " Plug 'JamshedVesuna/vim-markdown-preview'
 
@@ -85,6 +92,12 @@ call plug#end()
 
 colorscheme gruvbox
 set background=dark
+
+" set indent line guide
+let g:indentLine_conceallevel=1
+let g:indentLine_setColors=0
+let g:indentLine_bgcolor_gui = '#2B2B2B'
+let g:indentLine_char_list=['|', '¦', '┆', '┊']
 
 " map leader key to space
 let mapleader = " "
@@ -214,4 +227,3 @@ nnoremap <C-n> :call OpenTerminal()<CR>
 " markdown preview setting
 let vim_markdown_preview_toggle = 1
 let vim_markdown_preview_hotkey = '<leader>md'
-
